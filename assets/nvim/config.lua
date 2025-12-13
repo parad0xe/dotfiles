@@ -1,0 +1,64 @@
+local opts = { noremap = true, silent = true }
+local keymap = vim.api.nvim_set_keymap
+
+-- disable netrw at the very start of your init.lua
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+local function my_on_attach(bufnr)
+	local api = require "nvim-tree.api"
+
+	local function opts(desc)
+		return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+	end
+
+	-- default mappings
+	api.config.mappings.default_on_attach(bufnr)
+
+	-- custom mappings
+	vim.keymap.set('n', ' c',     api.tree.collapse_all)
+end
+
+-- optionally enable 24-bit colour
+vim.opt.termguicolors = true
+
+require("nvim-tree").setup({
+	on_attach = my_on_attach,
+	sort = {
+		sorter = "case_sensitive",
+	},
+	view = {
+		width = 30,
+	},
+	update_focused_file = {
+		enable = true
+	},
+	renderer = {
+		group_empty = true,
+		root_folder_label = false,
+		icons = {
+			web_devicons = {
+				folder = {
+					enable = true
+				}
+			}
+		}
+	},
+	filters = {
+		dotfiles = true
+	},
+})
+
+keymap("n", " e", ":NvimTreeToggle<cr>", opts)
+keymap("n", " f", ":NvimTreeFocus<cr>", opts)
+keymap("n", " R", ":NvimTreeRefresh<cr>", opts)
+keymap("n", " 1", ":NvimTreeResize 50<cr>", opts)
+keymap("n", " 0", ":NvimTreeResize 30<cr>", opts)
+
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', ' ff', builtin.find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', ' fg', builtin.live_grep, { desc = 'Telescope live grep' })
+vim.keymap.set('n', ' fb', builtin.buffers, { desc = 'Telescope buffers' })
+vim.keymap.set('n', ' fh', builtin.help_tags, { desc = 'Telescope help tags' })
+
+
