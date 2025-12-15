@@ -7,6 +7,7 @@ Plug 'sainnhe/everforest'
 Plug 'AlexvZyl/nordic.nvim', { 'branch': 'main' }
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
+Plug 'kdheepak/lazygit.nvim'
 
 call plug#end()
 

@@ -54,6 +54,7 @@ keymap("n", " f", ":NvimTreeFocus<cr>", opts)
 keymap("n", " R", ":NvimTreeRefresh<cr>", opts)
 keymap("n", " 1", ":NvimTreeResize 50<cr>", opts)
 keymap("n", " 0", ":NvimTreeResize 30<cr>", opts)
+keymap("n", " lg", "<CMD>LazyGit<cr>", opts)
 
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', ' ff', builtin.find_files, { desc = 'Telescope find files' })
