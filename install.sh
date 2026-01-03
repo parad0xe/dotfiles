@@ -17,7 +17,7 @@ function download_vim_plug
 			exit 1
 		fi
 	fi
-	echo "installed"
+	echo "done"
 }
 
 function download_nerd_font
@@ -34,15 +34,36 @@ function download_nerd_font
 		cd ../..
 		fc-cache -fv 1>/dev/null
 	fi
-	echo "installed"
+	echo "done"
 }
 
-mkdir -p $HOME/.config/nvim
-ln -sf $ASSETS/nvim/config.lua $HOME/.config/nvim/config.lua
-ln -sf $ASSETS/nvim/init.vim $HOME/.config/nvim/init.vim 
+function configure_nvim
+{
+	echo ""
+	echo "== Configure Nvim =="
+	mkdir -p $HOME/.config/nvim
+	ln -sf $ASSETS/nvim/config.lua $HOME/.config/nvim/config.lua
+	ln -sf $ASSETS/nvim/init.vim $HOME/.config/nvim/init.vim 
+	echo "done"
+}
+
+function install_bin
+{
+	echo ""
+	echo "== Install binaries =="
+	mkdir -p $HOME/.local/bin
+	for bin in $(ls $ASSETS/bin); do
+		echo -n "install $bin into $HOME/.local/bin.. "
+		cp $ASSETS/bin/$bin $HOME/.local/bin
+		echo "OK"
+	done
+	echo "done"
+}
 
 download_vim_plug
 download_nerd_font
+configure_nvim
+install_bin
 
 rm -rf $TMP
 

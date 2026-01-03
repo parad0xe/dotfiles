@@ -54,7 +54,7 @@ keymap("n", " f", ":NvimTreeFocus<cr>", opts)
 keymap("n", " R", ":NvimTreeRefresh<cr>", opts)
 keymap("n", " 1", ":NvimTreeResize 50<cr>", opts)
 keymap("n", " 0", ":NvimTreeResize 30<cr>", opts)
-keymap("n", " lg", "<CMD>LazyGit<cr>", opts)
+keymap("n", " lg", "<cmd>LazyGit<cr>", opts)
 
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', ' ff', builtin.find_files, { desc = 'Telescope find files' })
@@ -62,5 +62,4 @@ vim.keymap.set('n', ' fg', builtin.live_grep, { desc = 'Telescope live grep' })
 vim.keymap.set('n', ' fb', builtin.buffers, { desc = 'Telescope buffers' })
 vim.keymap.set('n', ' fh', builtin.help_tags, { desc = 'Telescope help tags' })
 
-vim.keymap.set('n', 'x', '<Plug>(doge-generate)')
-
+vim.keymap.set('n', ' x', '<Plug>(doge-generate)')
