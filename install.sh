@@ -3,10 +3,10 @@
 ASSETS=$PWD/assets
 TMP=$PWD/tmp
 
-function download_vim_plug
+function install_vim_plug
 {
 	echo ""
-	echo "== Vim Plug =="
+	echo "== Install Vim Plug =="
 	if [ ! -f "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim" ]; then
 		sh -c 'curl -sfLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim \
 			--create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim' \
@@ -20,10 +20,10 @@ function download_vim_plug
 	echo "done"
 }
 
-function download_nerd_font
+function install_nerd_font
 {
 	echo ""
-	echo "== Nerd Font =="
+	echo "== Install Nerd Font =="
 	if [ ! -f "$HOME/.local/share/fonts/JetBrainsMonoNLNerdFont-Thin.ttf" ]; then
 		mkdir -p $TMP/nerd-font
 		mkdir -p $HOME/.local/share/fonts
@@ -34,16 +34,6 @@ function download_nerd_font
 		cd ../..
 		fc-cache -fv 1>/dev/null
 	fi
-	echo "done"
-}
-
-function configure_nvim
-{
-	echo ""
-	echo "== Configure Nvim =="
-	mkdir -p $HOME/.config/nvim
-	ln -sf $ASSETS/nvim/config.lua $HOME/.config/nvim/config.lua
-	ln -sf $ASSETS/nvim/init.vim $HOME/.config/nvim/init.vim 
 	echo "done"
 }
 
@@ -60,10 +50,30 @@ function install_bin
 	echo "done"
 }
 
-download_vim_plug
-download_nerd_font
-configure_nvim
+function configure_nvim
+{
+	echo ""
+	echo "== Install nvim configuration =="
+	mkdir -p $HOME/.config/nvim
+	ln -sf $ASSETS/nvim/config.lua $HOME/.config/nvim/config.lua
+	ln -sf $ASSETS/nvim/init.vim $HOME/.config/nvim/init.vim 
+	echo "done"
+}
+
+function configure_fish
+{
+	echo ""
+	echo "== Install fish configuration =="
+	mkdir -p $HOME/.config/fish
+	ln -sf $ASSETS/fish/config.fish $HOME/.config/fish/config.fish
+	echo "done"
+}
+
+install_vim_plug
+install_nerd_font
 install_bin
+configure_nvim
+configure_fish
 
 rm -rf $TMP
 
