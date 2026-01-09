@@ -29,9 +29,11 @@ set -g fish_prompt_pwd_dir_length 4
 
 set -Ua fish_user_paths $HOME/.cargo/bin
 
-export PYENV_ROOT="$HOME/.pyenv"
-set -Ua fish_user_paths $PYENV_ROOT/bin
-pyenv init - | source
+if type -q pyenv
+	export PYENV_ROOT="$HOME/.pyenv"
+	set -Ua fish_user_paths $PYENV_ROOT/bin
+	pyenv init - | source
+end
 
 alias francinette="/home/parad0xe/francinette/tester.sh"
 alias paco="/home/parad0xe/francinette/tester.sh"

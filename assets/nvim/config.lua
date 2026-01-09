@@ -65,34 +65,37 @@ vim.keymap.set('n', ' fh', builtin.help_tags, { desc = 'Telescope help tags' })
 vim.keymap.set('n', ' x', '<Plug>(doge-generate)')
 
 local ok, lint = pcall(require, "lint")
-lint.linters_by_ft = {
-  python = {'flake8'},
-}
+if ok then
+	if vim.fn.executable("flake8") == 1 then
+		lint.linters_by_ft.python = { "flake8" }
+	end
 
-vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave", "BufReadPost", "BufNewFile" }, {
-  callback = function()
-    -- ne lancer lint que si le fichier a un linter configuré
-    local ft = vim.bo.filetype
-    if lint.linters_by_ft[ft] then
-      lint.try_lint()
-    end
-  end,
-})
+	vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave", "BufReadPost", "BufNewFile" }, {
+	  callback = function()
+		-- ne lancer lint que si le fichier a un linter configuré
+		local ft = vim.bo.filetype
+		if lint.linters_by_ft[ft] then
+		  lint.try_lint()
+		end
+	  end,
+	})
 
-vim.diagnostic.config({
-  virtual_text = {
-    prefix = "▎"--, "✖"
-  },
-  signs = true,
-  underline = false,
-  update_in_insert = false,
-  severity_sort = true,
-})
+	vim.diagnostic.config({
+	  virtual_text = {
+		prefix = "▎"--, "✖"
+	  },
+	  signs = true,
+	  underline = false,
+	  update_in_insert = false,
+	  severity_sort = true,
+	})
 
-vim.api.nvim_set_hl(0, "DiagnosticError", { fg = "#ff5555" })
-vim.api.nvim_set_hl(0, "DiagnosticWarn",  { fg = "#ff5555" })
--- vim.api.nvim_set_hl(0, "DiagnosticWarn",  { fg = "#f1fa8c" })
+	vim.api.nvim_set_hl(0, "DiagnosticError", { fg = "#ff5555" })
+	vim.api.nvim_set_hl(0, "DiagnosticWarn",  { fg = "#ff5555" })
+	-- vim.api.nvim_set_hl(0, "DiagnosticWarn",  { fg = "#f1fa8c" })
 
-vim.api.nvim_set_hl(0, "DiagnosticVirtualTextError", { fg = "#ff6c6b" })
-vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn",  { fg = "#ff6c6b" })
---vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn",  { fg = "#ECBE7B" })
+	vim.api.nvim_set_hl(0, "DiagnosticVirtualTextError", { fg = "#ff6c6b" })
+	vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn",  { fg = "#ff6c6b" })
+	--vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn",  { fg = "#ECBE7B" })
+end
+
