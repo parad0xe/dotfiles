@@ -63,6 +63,9 @@ vim.keymap.set('n', ' fb', builtin.buffers, { desc = 'Telescope buffers' })
 vim.keymap.set('n', ' fh', builtin.help_tags, { desc = 'Telescope help tags' })
 
 vim.keymap.set('n', ' x', '<Plug>(doge-generate)')
+vim.api.nvim_create_user_command('DogeAll', function()
+  vim.cmd([[g/^\s*\(def\s\+\k\+\s*(\|class\s\+\k\+\)/DogeGenerate google]])
+end, {})
 
 local ok, lint = pcall(require, "lint")
 if ok then
