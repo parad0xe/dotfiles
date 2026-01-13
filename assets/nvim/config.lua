@@ -30,6 +30,18 @@ vim.api.nvim_set_hl(0, "ColorColumn", {
   bg = "#3b1414"
 })
 
+require('smear_cursor').setup({
+	enable = true
+})
+
+require('staline').setup({
+	sections = {
+        left = { '- ', '-mode', ' ', 'branch' },
+        mid  = { },
+        right = { 'file_name', 'cool_symbol', '-line_column' },
+    },
+})
+
 require("nvim-tree").setup({
 	on_attach = my_on_attach,
 	sort = {
@@ -99,6 +111,7 @@ keymap("n", " R", ":NvimTreeRefresh<cr>", opts)
 keymap("n", " 1", ":NvimTreeResize 50<cr>", opts)
 keymap("n", " 0", ":NvimTreeResize 23<cr>", opts)
 keymap("n", " lg", "<cmd>LazyGit<cr>", opts)
+keymap("n", " mt", "<cmd>MarkdownPreviewToggle<cr>", opts)
 
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', ' ff', builtin.find_files, { desc = 'Telescope find files' })

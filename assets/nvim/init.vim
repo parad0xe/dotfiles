@@ -12,6 +12,9 @@ Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 Plug 'mfussenegger/nvim-lint'
 Plug 'folke/tokyonight.nvim'
 Plug 'xiyaowong/transparent.nvim'
+Plug 'tamton-aquib/staline.nvim'
+Plug 'sphamba/smear-cursor.nvim'
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 call plug#end()
 
