@@ -16,11 +16,19 @@ local function my_on_attach(bufnr)
 	api.config.mappings.default_on_attach(bufnr)
 
 	-- custom mappings
-	vim.keymap.set('n', ' c',     api.tree.collapse_all)
+	vim.keymap.set('n', ' c',  api.tree.collapse_all)
 end
 
 -- optionally enable 24-bit colour
 vim.opt.termguicolors = true
+
+vim.api.nvim_set_hl(0, "NvimTreeWinSeparator", {
+  fg = "#352d36",
+  bg = "NONE"
+})
+vim.api.nvim_set_hl(0, "ColorColumn", {
+  bg = "#3b1414"
+})
 
 require("nvim-tree").setup({
 	on_attach = my_on_attach,
@@ -28,7 +36,7 @@ require("nvim-tree").setup({
 		sorter = "case_sensitive",
 	},
 	view = {
-		width = 30,
+		width = 23,
 	},
 	update_focused_file = {
 		enable = true
@@ -49,11 +57,47 @@ require("nvim-tree").setup({
 	},
 })
 
+require("transparent").setup({
+	groups = { -- table: default groups
+		'Normal', 'NormalNC', 'Comment', 'Constant', 'Special', 'Identifier',
+		'Statement', 'PreProc', 'Type', 'Underlined', 'Todo', 'String', 'Function',
+		'Conditional', 'Repeat', 'Operator', 'Structure', 'LineNr', 'NonText',
+		'SignColumn', 'CursorLine', 'CursorLineNr', 'StatusLine', 'StatusLineNC',
+		'EndOfBuffer',
+	},
+	extra_groups = {
+		"NormalFloat",
+		"NvimTreeNormal",
+		"NvimTreeNormalNC",
+		"NvimTreeNormalFloat",
+		"NvimTreeEndOfBuffer",
+		"StatusLine",
+		"StatusLineNC",
+		"BufferLineTabClose",
+		"BufferlineBufferSelected",
+		"BufferLineFill",
+		"BufferLineBackground",
+		"BufferLineSeparator",
+		"BufferLineIndicatorSelected",
+
+		"IndentBlanklineChar",
+
+		-- make floating windows transparent
+		"LspFloatWinNormal",
+		"Normal",
+		"NormalFloat",
+		"FloatBorder",
+		"TelescopeNormal",
+		"TelescopeBorder",
+		"TelescopePromptBorder",
+	}
+})
+
 keymap("n", " e", ":NvimTreeToggle<cr>", opts)
 keymap("n", " f", ":NvimTreeFocus<cr>", opts)
 keymap("n", " R", ":NvimTreeRefresh<cr>", opts)
 keymap("n", " 1", ":NvimTreeResize 50<cr>", opts)
-keymap("n", " 0", ":NvimTreeResize 30<cr>", opts)
+keymap("n", " 0", ":NvimTreeResize 23<cr>", opts)
 keymap("n", " lg", "<cmd>LazyGit<cr>", opts)
 
 local builtin = require('telescope.builtin')

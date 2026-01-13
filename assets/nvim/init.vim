@@ -2,7 +2,6 @@ call plug#begin()
 
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'nvim-tree/nvim-tree.lua'
-Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 Plug 'sainnhe/everforest'
 Plug 'AlexvZyl/nordic.nvim', { 'branch': 'main' }
 Plug 'nvim-lua/plenary.nvim'
@@ -11,19 +10,21 @@ Plug 'kdheepak/lazygit.nvim'
 Plug 'tpope/vim-surround'
 Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 Plug 'mfussenegger/nvim-lint'
+Plug 'folke/tokyonight.nvim'
+Plug 'xiyaowong/transparent.nvim'
 
 call plug#end()
 
 syntax on
 set nu
-set colorcolumn=80
+set colorcolumn=79
 set tabstop=4
 set shiftwidth=4
 set smartindent
 set autoindent
 
-" colorscheme catppuccin "catppuccin-frappe"
-colorscheme nordic
+" colorscheme nordic
+colorscheme tokyonight-moon
 " colorscheme everforest
 
 function! Header()
