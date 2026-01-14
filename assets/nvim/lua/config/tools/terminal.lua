@@ -29,3 +29,7 @@ keymap("n", "<C-n>", "i", opts)
 
 -- switch mode: terminal -> normal
 keymap("t", "<C-n>", "<C-\\><C-n>", opts)
+
+-- resize
+keymap("t", "<C-Up>", "<Cmd>resize +2<CR>", opts)
+keymap("t", "<C-Down>", "<Cmd>resize -2<CR>", opts)
