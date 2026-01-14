@@ -1,0 +1,2 @@
+
+require("tiny-glimmer").setup()

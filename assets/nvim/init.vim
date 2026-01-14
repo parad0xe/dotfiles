@@ -15,18 +15,20 @@ Plug 'rmagatti/goto-preview'
 Plug 'mason-org/mason.nvim'
 Plug 'mason-org/mason-lspconfig.nvim'
 Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-mini/mini.nvim'
 
 " tools
 Plug 'kdheepak/lazygit.nvim'
 Plug 'tpope/vim-surround'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
 
 " appearance
 Plug 'folke/tokyonight.nvim'
 Plug 'xiyaowong/transparent.nvim'
 Plug 'tamton-aquib/staline.nvim'
 Plug 'sphamba/smear-cursor.nvim'
-
+Plug 'rachartier/tiny-glimmer.nvim'
 
 call plug#end()
 

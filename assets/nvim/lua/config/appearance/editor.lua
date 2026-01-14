@@ -1,4 +1,5 @@
 
+
 require("tokyonight").setup({
 	transparent = true
 })
@@ -25,13 +26,13 @@ require("transparent").setup({
 		"BufferLineBackground",
 		"BufferLineSeparator",
 		"BufferLineIndicatorSelected",
-
 		"IndentBlanklineChar",
-
-		-- make floating windows transparent
+		"ToggleTerm",
 		"LspFloatWinNormal",
 		"Normal",
-		"NormalFloat",
+		"FloatBorder", 
+		"ToggleTerm",
+		"TermNormal",
 		"FloatBorder",
 		"TelescopeNormal",
 		"TelescopeBorder",
