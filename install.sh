@@ -54,9 +54,10 @@ function configure_nvim
 {
 	echo ""
 	echo "== Install nvim configuration =="
-	mkdir -p $HOME/.config/nvim
+	mkdir -p $HOME/.config/nvim/lua
 	ln -sf $ASSETS/nvim/config.lua $HOME/.config/nvim/config.lua
 	ln -sf $ASSETS/nvim/init.vim $HOME/.config/nvim/init.vim 
+	ln -sf $ASSETS/nvim/lua/config $HOME/.config/nvim/lua/config 
 	echo "done"
 }
 

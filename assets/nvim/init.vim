@@ -1,21 +1,32 @@
 call plug#begin()
 
+" navigation
 Plug 'nvim-tree/nvim-web-devicons'
 Plug 'nvim-tree/nvim-tree.lua'
-Plug 'sainnhe/everforest'
-Plug 'AlexvZyl/nordic.nvim', { 'branch': 'main' }
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
-Plug 'kdheepak/lazygit.nvim'
-Plug 'tpope/vim-surround'
+Plug 'nxhung2304/lastplace.nvim'
+
+" code
 Plug 'kkoomen/vim-doge', { 'do': { -> doge#install() } }
 Plug 'mfussenegger/nvim-lint'
+Plug 'rmagatti/logger.nvim'
+Plug 'rmagatti/goto-preview'
+Plug 'mason-org/mason.nvim'
+Plug 'mason-org/mason-lspconfig.nvim'
+Plug 'neovim/nvim-lspconfig'
+
+" tools
+Plug 'kdheepak/lazygit.nvim'
+Plug 'tpope/vim-surround'
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+
+" appearance
 Plug 'folke/tokyonight.nvim'
 Plug 'xiyaowong/transparent.nvim'
 Plug 'tamton-aquib/staline.nvim'
 Plug 'sphamba/smear-cursor.nvim'
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-Plug 'nxhung2304/lastplace.nvim'
+
 
 call plug#end()
 
@@ -31,12 +42,9 @@ set undofile
 set undodir=~/.local/share/nvim/undo/
 set undolevels=100
 
-" colorscheme nordic
 colorscheme tokyonight-moon
-" colorscheme everforest
 
-function! Header()
-	"==================  editing header file =====================
+function! CHeader()
 	let header = expand("%:t:r")
 	call append(0,"#ifndef ".toupper(header)."_H")
 	call append(1,"# define ".toupper(header)."_H")
@@ -47,8 +55,7 @@ function! Header()
 	call cursor(4, 0)
 endfunction
 
-function! Main()
-	"==================  editing header file =====================
+function! CMain()
 	call append(0,"#include <>")
 	call append(1,"")
 	call append(2,"int	main(int argc, char *argv[])")
@@ -59,7 +66,25 @@ function! Main()
 	call cursor(5, 0)
 endfunction
 
-command! -nargs=0 Header call Header()
+function! Main()
+    call append(1, "import sys")
+    call append(2, "")
+    call append(3, "")
+    call append(4, "def main() -> None:")
+    call append(5, "    pass")
+    call append(6, "")
+    call append(7, "")
+    call append(8, "if __name__ == '__main__':")
+    call append(9, "    try:")
+    call append(10, "        main()")
+    call append(11, "    except Exception as e:")
+    call append(12, "        print('Main Error:', e)")
+    call append(13, "        sys.exit(1)")
+	call cursor(6, 9)
+endfunction
+
+command! -nargs=0 CHeader call CHeader()
+command! -nargs=0 CMain call CMain()
 command! -nargs=0 Main call Main()
 
 source ~/.vim/plugin/stdheader.vim
