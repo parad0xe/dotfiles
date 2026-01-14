@@ -69,6 +69,10 @@ require("nvim-tree").setup({
 	},
 })
 
+require("tokyonight").setup({
+	transparent = true
+})
+
 require("transparent").setup({
 	groups = { -- table: default groups
 		'Normal', 'NormalNC', 'Comment', 'Constant', 'Special', 'Identifier',
@@ -112,6 +116,7 @@ keymap("n", " 1", ":NvimTreeResize 50<cr>", opts)
 keymap("n", " 0", ":NvimTreeResize 23<cr>", opts)
 keymap("n", " lg", "<cmd>LazyGit<cr>", opts)
 keymap("n", " mt", "<cmd>MarkdownPreviewToggle<cr>", opts)
+keymap("n", " tt", "<cmd>TransparentToggle<cr>", opts)
 
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', ' ff', builtin.find_files, { desc = 'Telescope find files' })
