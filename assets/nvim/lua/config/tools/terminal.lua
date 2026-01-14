@@ -10,7 +10,7 @@ require("toggleterm").setup({
     end,
     direction = "horizontal",
 	persist_size = true,
-	persist_mode = true,
+	persist_mode = false,
     hide_numbers = true,
     shade_filetypes = {},
     shade_terminals = false,
