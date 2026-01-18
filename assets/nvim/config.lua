@@ -27,12 +27,10 @@ require('config.appearance.animations')
 -- Tools
 require('config.tools.terminal')
 
-local function smart_close()
+keymap("n", "<C-q>", function()
     vim.cmd("close")
     editor_focus()
-end
+end, { desc = "Smart close window" })
 
-keymap("n", "<C-q>", smart_close, { desc = "Smart close window", silent = true })
-
-keymap("n", " lg", "<cmd>LazyGit<cr>", opts)
-keymap("n", " mt", "<cmd>MarkdownPreviewToggle<cr>", opts)
+keymap("n", " lg", "<cmd>LazyGit<cr>", { desc = "Open lazygit window" })
+keymap("n", " mt", "<cmd>MarkdownPreviewToggle<cr>", { desc = "Toggle markdown preview in browser" })
