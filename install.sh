@@ -44,7 +44,7 @@ function install_bin
 	mkdir -p $HOME/.local/bin
 	for bin in $(ls $ASSETS/bin); do
 		echo -n "install $bin into $HOME/.local/bin.. "
-		ln -Tsf $ASSETS/bin/$bin $HOME/.local/bin
+		ln -Tsf $ASSETS/bin/$bin $HOME/.local/bin/$bin
 		echo "OK"
 	done
 	echo "done"
@@ -57,7 +57,7 @@ function install_scripts
 	mkdir -p $HOME/.local/bin
 	for bin in $(ls $ASSETS/scripts); do
 		echo -n "install $bin into $HOME/.local/bin.. "
-		ln -Tsf $ASSETS/scripts/$bin $HOME/.local/bin
+		ln -Tsf $ASSETS/scripts/$bin $HOME/.local/bin/$bin
 		echo "OK"
 	done
 	echo "done"
