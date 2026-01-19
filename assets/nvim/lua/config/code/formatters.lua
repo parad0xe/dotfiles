@@ -3,10 +3,17 @@ local conform_ok, conform = pcall(require, "conform")
 if conform_ok then
 	conform.setup({
 		formatters_by_ft = {
-			python = { "ruff_fix", "ruff_organize_imports", "yapf" },
+			python = { "ruff_organize_imports", "ruff_fix", "ruff_format", "yapf" },
 		},
 
 		formatters = {
+			ruff_format = {
+				args = {
+					"format",
+					"--stdin-filename", "$FILENAME",
+					"-",
+				},
+			},
 			yapf = {
 				prepend_args = {
 					"--style",
@@ -16,7 +23,7 @@ if conform_ok then
 						"COLUMN_LIMIT: 79," ..
 						"SPLIT_BEFORE_DOT: true," ..
 						"SPLIT_BEFORE_DICT_SET_GENERATOR: true," ..
-						"SPACES_BEFORE_COMMENT: 1," ..
+						"SPACES_BEFORE_COMMENT: 2," ..
 						"SPLIT_BEFORE_EXPRESSION_AFTER_OPENING_PAREN: true," ..
 						"SPLIT_BEFORE_FIRST_ARGUMENT: true," ..
 						"COALESCE_BRACKETS: true," ..
