@@ -20,6 +20,7 @@ if lint_ok then
     end
 
     vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave", "BufReadPost", "BufNewFile" }, {
+		pattern = "*.py",
         callback = function()
             lint.try_lint()
         end,
