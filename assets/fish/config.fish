@@ -35,6 +35,10 @@ if type -q pyenv
 	pyenv init - | source
 end
 
+if type -q nvm
+	nvm --silent use 18
+end
+
 alias francinette="/home/parad0xe/francinette/tester.sh"
 alias paco="/home/parad0xe/francinette/tester.sh"
 alias c="cc -Wall -Wextra -Werror"
