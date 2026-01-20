@@ -6,12 +6,14 @@ GITIGNORE=".gitignore"
 
 if [ ! -f "$GITIGNORE" ]; then
   cat <<'EOF' > "$GITIGNORE"
-.venv
+__pycache__/
+.venv/
+
 .gitignore
+
 *.toml
 *.lock
 *.swp
-__pycache__
 EOF
   echo ".gitignore created."
 else
