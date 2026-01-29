@@ -79,7 +79,13 @@ function configure_fish
 	echo ""
 	echo "== Install fish configuration =="
 	mkdir -p $HOME/.config/fish
+	mkdir -p $HOME/.config/fish/functions
 	ln -Tsf $ASSETS/fish/config.fish $HOME/.config/fish/config.fish
+	for fn in $(ls $ASSETS/fish/functions); do
+		echo -n "install $fn into $HOME/.config/fish/functions.. "
+		ln -Tsf $ASSETS/fish/functions/$fn $HOME/.config/fish/functions/$fn
+		echo "OK"
+	done
 	echo "done"
 }
 
