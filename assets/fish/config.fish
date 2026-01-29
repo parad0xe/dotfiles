@@ -50,4 +50,12 @@ alias tree="tree -C -a -I '.git|.venv'"
 alias vim="nvim"
 alias cat="pygmentize -g"
 alias py="python3"
+
+# create and move into tempd directory
 alias cdmk="cd (mktemp -d)"
+
+# git log (oneline)
+alias gl="git log --oneline"
+
+# git short log by users
+alias gsl="git shortlog"
