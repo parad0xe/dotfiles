@@ -6,6 +6,11 @@ function fish_prompt
     # Sauvegarder le code retour de la dernière commande
 	set -l last_status $status
 
+	set -l junest_str ""
+    if set -q JUNEST_ENV
+        set junest_str (set_color blue)"[JuNest] "(set_color normal)
+    end
+
 	# Couleur selon succès/échec
 	set -l color_status (test $last_status -eq 0; and echo green; or echo red)
 	set -l status_str (set_color $color_status)"[$last_status]"(set_color normal)
@@ -21,13 +26,16 @@ function fish_prompt
 
 	# Prompt final
 	echo ""
-	echo "$status_str $user_str $pwd_str$git_str"
+	echo "$status_str $junest_str$user_str $pwd_str$git_str"
 	echo -n (set_color $color_status)"> "(set_color normal)
 end
 
 set -g fish_prompt_pwd_dir_length 4
 
 set -Ua fish_user_paths $HOME/.cargo/bin
+set -Ua fish_user_paths $HOME/.local/bin
+set -Ua fish_user_paths $HOME/.local/share/junest/bin
+set -Ua fish_user_paths $HOME/.junest/usr/bin_wrappers
 
 if type -q pyenv
 	export PYENV_ROOT="$HOME/.pyenv"
@@ -46,10 +54,10 @@ alias paco="/home/parad0xe/francinette/tester.sh"
 alias c="cc -Wall -Wextra -Werror"
 alias n="norminette"
 alias ll="ls -la"
-alias tree="tree -C -a -I '.git|.venv'"
 alias vim="nvim"
 alias cat="pygmentize -g"
 alias py="python3"
+alias j="junest -- fish"
 
 # create and move into tempd directory
 alias cdmk="cd (mktemp -d)"
