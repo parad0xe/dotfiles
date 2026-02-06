@@ -32,19 +32,19 @@ end
 
 set -g fish_prompt_pwd_dir_length 4
 
-set -Ua fish_user_paths $HOME/.cargo/bin
-set -Ua fish_user_paths $HOME/.local/bin
-set -Ua fish_user_paths $HOME/.local/share/junest/bin
-set -Ua fish_user_paths $HOME/.junest/usr/bin_wrappers
+fish_add_path -gPa $HOME/.cargo/bin
+fish_add_path -gPa $HOME/.local/bin
+fish_add_path -gPa $HOME/.local/share/junest/bin
+fish_add_path -gPa $HOME/.junest/usr/bin_wrappers
 
+export PYENV_ROOT="$HOME/.pyenv"
+fish_add_path -gPa $PYENV_ROOT/bin
 if type -q pyenv
-	export PYENV_ROOT="$HOME/.pyenv"
-	set -Ua fish_user_paths $PYENV_ROOT/bin
 	pyenv init - | source
 end
 
 if type -q nvm
-	nvm --silent use 18
+	nvm --silent use latest
 end
 
 export EDITOR=/usr/bin/vim
@@ -57,7 +57,7 @@ alias ll="ls -la"
 alias vim="nvim"
 alias cat="pygmentize -g"
 alias py="python3"
-alias j="junest -- fish"
+alias j="junest -b '--bind /goinfre /goinfre --bind /sgoinfre /sgoinfre' -- fish"
 
 # create and move into tempd directory
 alias cdmk="cd (mktemp -d)"
@@ -68,4 +68,4 @@ alias gl="git log --oneline"
 # git short log by users
 alias gsl="git shortlog"
 
-zoxide init fish | source
+#zoxide init fish | source
