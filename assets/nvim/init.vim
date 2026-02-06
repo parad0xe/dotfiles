@@ -34,7 +34,8 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': 
 Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
 
 " appearance
-Plug 'folke/tokyonight.nvim'
+" Plug 'folke/tokyonight.nvim'
+Plug 'projekt0n/github-nvim-theme'
 Plug 'xiyaowong/transparent.nvim'
 Plug 'tamton-aquib/staline.nvim'
 Plug 'sphamba/smear-cursor.nvim'

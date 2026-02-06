@@ -6,8 +6,18 @@ if tokyonight_ok then
 		transparent = true,
 		style = "moon",
 	})
-
 	vim.cmd("colorscheme tokyonight")
+end
+
+-- https://github.com/projekt0n/github-nvim-theme
+local githubtheme_ok, githubtheme = pcall(require, "github-theme")
+if githubtheme_ok then
+    githubtheme.setup({
+		options = {
+			transparent = true,
+		}
+	})
+	vim.cmd("colorscheme github_light")
 end
 
 -- https://github.com/xiyaowong/transparent.nvim
