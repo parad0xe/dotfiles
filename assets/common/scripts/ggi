@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# Description: Create .gitignore dynamically or fallback to sensible defaults
+
+set -euo pipefail
+
+GITIGNORE=".gitignore"
+
+if [[ -e "$GITIGNORE" ]]; then
+    echo "Error: '$GITIGNORE' already exists in the current directory." >&2
+    exit 1
+fi
+
+if [[ ! -w . ]]; then
+    echo "Error: No write permission in the current directory." >&2
+    exit 1
+fi
+
+if [[ $# -eq 0 ]]; then
+    cat <<'EOF' > "$GITIGNORE"
+# Default ignores
+__pycache__/
+.venv/
+.env
+*.toml
+*.lock
+*.swp
+.DS_Store
+EOF
+    echo "$GITIGNORE created with default rules."
+else
+    IFS=','
+    LANGUAGES="$*"
+    
+    echo "Fetching rules for: $LANGUAGES..."
+    
+    if curl -sL "https://www.toptal.com/developers/gitignore/api/$LANGUAGES" -o "$GITIGNORE"; then
+        echo "$GITIGNORE successfully created for $LANGUAGES."
+    else
+        echo "Error: Failed to fetch rules from gitignore.io." >&2
+        rm -f "$GITIGNORE"
+        exit 1
+    fi
+fi
