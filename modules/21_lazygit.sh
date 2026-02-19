@@ -47,7 +47,7 @@ _install_lazygit() {
 	info "Extracting and moving binary..."
 	safe_execute tar -xf "$TMP_DIR/$archive_name" -C "$TMP_DIR" "$bin"
 	
-	safe_mkdir -p "$LOCAL_BIN_DIR"
+	safe_mkdir "$LOCAL_BIN_DIR"
 	safe_execute mv "$TMP_DIR/$bin" "$LOCAL_BIN_DIR/$bin"
    
 	success "Lazygit installed successfully in $LOCAL_BIN_DIR"

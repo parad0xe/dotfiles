@@ -47,13 +47,10 @@ module_configure() {
 
     case "$TARGET_SHELL" in
         fish)
-            safe_mkdir -p "$HOME/.config/fish"
+            safe_mkdir "$HOME/.config/fish"
             
             step "Linking config.fish..."
             safe_link "$ASSETS_DIR/shell/fish/config.fish" "$HOME/.config/fish/config.fish"
-            
-            step "Linking .bashrc..."
-            safe_link "$ASSETS_DIR/shell/fish/.bashrc" "$HOME/.bashrc"
             
             blank
             info "Synchronizing fish functions..."

@@ -57,6 +57,7 @@ _install_nvm_fish() {
 	blank
 	info "Installing latest node.js version..."
 	safe_execute fish -c "nvm install latest"
+	safe_execute fish -c "set -U nvm_default_version latest"
 
 	success "Nvm and node.js installed successfully for $TARGET_SHELL"
 }

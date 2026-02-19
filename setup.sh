@@ -7,6 +7,7 @@ FORCE_CONFIRMATION="false"
 DRY_RUN="false"
 VERBOSE=1
 TARGET_SHELL=""
+TARGET_SHELL_RC=""
 
 readonly PROJECT_ROOT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 readonly TMP_DIR="$(mktemp -d)"
@@ -53,7 +54,7 @@ shopt -u nullglob
 
 usage() {
 	blank
-	log "Usage: $0 [-yjdvhs] {install|reconfigure|uninstall}"
+	log "Usage: $0 [-yjdvhs] {install|reinstall|reconfigure|uninstall}"
 	log "	-y|--yes         force all confirmations"
 	log "	-d|--dry-run     simulate setup"
 	log "	-s|--shell       target shell (bash|zsh|fish)"
@@ -93,7 +94,15 @@ setup_shell_env() {
         fi
     fi
     
+	case "$TARGET_SHELL" in
+		bash) TARGET_SHELL_RC="$HOME/.bashrc" ;;
+		zsh)  TARGET_SHELL_RC="$HOME/.zshrc" ;;
+		fish) TARGET_SHELL_RC="$HOME/.config/fish/config.fish" ;;
+		*) fatal "Unsupported shell: $TARGET_SHELL. No configuration file found." ;;
+	esac
+
     success "Target shell set to: $TARGET_SHELL"
+	success "Target configuration file identified: $TARGET_SHELL_RC"
 }
 
 load_all_modules() {
@@ -114,6 +123,10 @@ load_all_modules() {
 						module_install
 						module_configure
 					fi
+					;;
+				reinstall)
+					module_install
+					module_configure
 					;;
 				reconfigure)
 					if ! module_check; then
@@ -149,7 +162,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         -v|--verbose) VERBOSE=2; shift ;;
         -h|--help) usage ;;
-        install|reconfigure|uninstall) 
+        install|reinstall|reconfigure|uninstall) 
 			if ! is_empty "$RUN_COMMAND"; then
 				usage
 			fi
@@ -163,7 +176,7 @@ done
 
 detect_os
 
-if [[ "$RUN_COMMAND" =~ ^install|reconfigure$ ]]; then
+if [[ "$RUN_COMMAND" =~ ^install|reinstall|reconfigure$ ]]; then
     setup_shell_env
 fi
 
@@ -173,13 +186,14 @@ readonly IS_VERBOSE=$([ "$(verbose)" == "2" ] && echo "true" || echo "false")
 header \
     "Runtime configuration" \
     "" \
-    "User           : $USER" \
-    "OS             : $ID ($ARCH)" \
-    "Target shell   : ${TARGET_SHELL:-none}" \
-    "Command        : $RUN_COMMAND" \
-    "Force confirms : $FORCE_CONFIRMATION" \
-    "Dry run        : $DRY_RUN" \
-    "Verbose        : $IS_VERBOSE" \
+    "User            : $USER" \
+    "OS              : $ID ($ARCH)" \
+    "Target shell    : ${TARGET_SHELL:-none}" \
+    "Target shell RC : ${TARGET_SHELL_RC:-none}" \
+    "Command         : $RUN_COMMAND" \
+    "Force confirms  : $FORCE_CONFIRMATION" \
+    "Dry run         : $DRY_RUN" \
+    "Verbose         : $IS_VERBOSE" \
     "" \
     "Directories" \
     "Project root   : $PROJECT_ROOT_DIR" \
@@ -188,7 +202,7 @@ header \
     "Local fonts    : $LOCAL_FONT_DIR"
 
 case $RUN_COMMAND in
-	install) install ;;
+	install|reinstall) install ;;
 	reconfigure) reconfigure ;;
 	uninstall) uninstall ;;
 	*) usage ;;

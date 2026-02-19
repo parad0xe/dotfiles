@@ -6,7 +6,8 @@ get_github_latest_release() {
     local latest_version
    
 	if dry_run; then
-		return "v0.0.0"
+		echo "v0.0.0"
+		return
 	fi
 
     latest_version=$(curl -s --connect-timeout 5 "https://api.github.com/repos/${repo}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
@@ -16,8 +17,7 @@ get_github_latest_release() {
             warn "GitHub API limit reached or offline for $repo. Falling back to $fallback" >&2
             echo "$fallback"
         else
-            err "Failed to fetch latest release for $repo and no fallback provided" >&2
-            return $RETERR
+            fatal "Failed to fetch latest release for $repo and no fallback provided" >&2
         fi
     else
         echo "${latest_version}"

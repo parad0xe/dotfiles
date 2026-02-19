@@ -103,12 +103,9 @@ _install_vim_plug() {
 
 _install_tree_sitter() {
     step "Installing tree-sitter-cli via npm..."
-	case "$TARGET_SHELL" in
-		fish)	try_sudo fish -c "sudo npm install -g tree-sitter-cli" ;;
-		*)
-			ensure_has_command "npm"
-			try_sudo npm install -g tree-sitter-cli
-			;;
-	esac
+
+	npm_install_g "tree-sitter-cli"
+
+	blank
 	success "Tree-sitter installed"
 }

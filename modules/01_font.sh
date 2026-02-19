@@ -21,7 +21,7 @@ module_install() {
 	
 	step "Detected latest version: $version"
 
-	safe_mkdir -p "$TMP_DIR/nerd-font" "$LOCAL_FONT_DIR"
+	safe_mkdir "$TMP_DIR/nerd-font" "$LOCAL_FONT_DIR"
 
 	blank
 	info "Downloading JetBrainsMono archive..."

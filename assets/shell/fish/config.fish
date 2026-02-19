@@ -44,7 +44,7 @@ if type -q pyenv
 end
 
 if type -q nvm
-	nvm --silent use latest
+	set nvm_default_version latest
 end
 
 export EDITOR=/usr/bin/vim

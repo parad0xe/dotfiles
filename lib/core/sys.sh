@@ -12,7 +12,7 @@ fish_command_exists() {
 		return $RETOK
 	fi
 	ensure_has_command "fish"
-	fish -c "functions -q $1" >/dev/null 2>&1
+	fish -c "command -v '$1' || which '$1' || functions -q '$1'" >/dev/null 2>&1
 }
 
 ensure_has_command() {
@@ -42,7 +42,7 @@ safe_execute() {
 }
 
 require_junest() {
-    if ! command_exists sudo; then
+    if ! has_sudo; then
         warn "Sudo access not detected. To proceed without root, junest is required"
     fi
 
@@ -53,8 +53,8 @@ require_junest() {
             
             safe_execute git clone --depth 1 https://github.com/fsquillace/junest.git "$JUNEST_DIR"
             safe_execute junest setup
-            safe_execute sudo pacman --noconfirm -Syy
-            safe_execute sudo pacman --noconfirm -Sy archlinux-keyring
+            safe_execute junest -- sudo pacman --noconfirm -Syy
+            safe_execute junest -- sudo pacman --noconfirm -Sy archlinux-keyring
             
             success "Junest installed"
         else
@@ -62,16 +62,16 @@ require_junest() {
             fatal "This script requires either sudo or junest to manage system dependencies"
         fi
     else
-        safe_execute sudo pacman --noconfirm -Syy
-        safe_execute sudo pacman --noconfirm -Sy archlinux-keyring
+        safe_execute junest -- sudo pacman --noconfirm -Syy
+        safe_execute junest -- sudo pacman --noconfirm -Sy archlinux-keyring
     fi
+
+    ID="arch"
 }
 
 has_sudo() {
-	local test_sudo_msg=$(LC_ALL=C sudo -ln 2>&1)
-	local test_sudo_ret=$?
-
-	[ $test_sudo_ret -eq 0 ] || "$test_sudo_msg" | grep -q "password is required"
+	local test_sudo_msg=$(LC_ALL=C sudo -vn 2>&1)
+	echo "$test_sudo_msg" | grep -q "password is required"
 }
 
 try_sudo() {
@@ -82,8 +82,14 @@ try_sudo() {
     fi
 
     if command_exists sudo; then
-        if ! safe_execute sudo "$@"; then
-            fatal "Failed to run 'sudo $*'"
+        if dir_exists "$JUNEST_ROOT_DIR"; then
+            if ! safe_execute junest -- sudo "$@"; then
+                fatal "Failed to run 'junest -- sudo $*'"
+            fi
+        else
+            if ! safe_execute sudo "$@"; then
+                fatal "Failed to run 'sudo $*'"
+            fi
         fi
     else
         fatal "Failed to run 'sudo $*'"
@@ -91,6 +97,11 @@ try_sudo() {
 }
 
 distro_install() {
+
+    if ! has_sudo; then
+        require_junest
+    fi
+
     local cmd=""
     case "$ID" in
         arch)
@@ -108,6 +119,10 @@ distro_install() {
 }
 
 pkg_install() {
+    if ! has_sudo; then
+        require_junest
+    fi
+
     local target_os="all" 
     case "$1" in
         --both) shift ;;
@@ -137,3 +152,22 @@ detect_os() {
 	fi
 }
 
+npm_install_g() {
+    local package="$1"
+    
+    case "$TARGET_SHELL" in
+        fish)
+            safe_execute fish -c "nvm use latest >/dev/null 2>&1 && npm install -g $package"
+            ;;
+        *)
+            export NVM_DIR="$HOME/.nvm"
+            if [ -s "$NVM_DIR/nvm.sh" ]; then
+                \. "$NVM_DIR/nvm.sh"
+                safe_execute npm install -g "$package"
+            else
+                ensure_has_command "npm"
+                try_sudo npm install -g "$package"
+            fi
+            ;;
+    esac
+}

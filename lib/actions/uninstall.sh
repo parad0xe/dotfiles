@@ -25,7 +25,9 @@ uninstall_junest() {
             info "Removing junest environments..."
             for dir in "${targets[@]}"; do
                 if [ -d "$dir" ]; then
-                    step "Deleting $dir"
+					if ! dry_run; then
+                    	step "Deleting $dir"
+					fi
                     safe_execute rm -rf --no-preserve-root "$dir"
                 fi
             done

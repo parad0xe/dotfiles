@@ -13,9 +13,19 @@ module_install() {
 
     blank
     info "Installing core cli utilities..."
-    pkg_install --both \
-        fish python3 curl wget clang \
+    pkg_install --both python3 curl wget clang \
         llvm gcc unzip tar git man make which vim ncdu
+
+	case "$TARGET_SHELL" in
+		fish)
+    		blank
+    		info "Installing terminal $TARGET_SHELL..."
+			pkg_install --both fish ;;
+		zsh)
+    		blank
+    		info "Installing terminal $TARGET_SHELL..."
+			pkg_install --both zsh ;;
+	esac
 
     blank
     info "Installing sys utilities..."
