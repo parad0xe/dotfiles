@@ -109,6 +109,7 @@ load_all_modules() {
     shopt -s nullglob
 
 	for module in "${PROJECT_ROOT_DIR}/modules"/*.sh; do
+		module_init() { return $RETOK; }
 		module_check() { return $RET_MODULECHECK_DONOTHING; }
 		module_install() { return $RETOK; }
 		module_configure() { return $RETOK; }
@@ -119,16 +120,19 @@ load_all_modules() {
 
 			case "$RUN_COMMAND" in
 				install)
+					module_init
 					if module_check; then
 						module_install
 						module_configure
 					fi
 					;;
 				reinstall)
+					module_init
 					module_install
 					module_configure
 					;;
 				reconfigure)
+					module_init
 					if ! module_check; then
 						module_configure
 					fi
@@ -138,7 +142,7 @@ load_all_modules() {
 			fatal "Module $module cannot be read."
 		fi
 		
-		unset -f module_check module_install module_configure
+		unset -f module_init module_check module_install module_configure
 	done
     
     shopt -u nullglob

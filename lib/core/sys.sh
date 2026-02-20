@@ -41,45 +41,17 @@ safe_execute() {
     fi
 }
 
-require_junest() {
-    if ! has_sudo; then
-        warn "Sudo access not detected. To proceed without root, junest is required"
-    fi
-
-    export PATH="$JUNEST_EXEC_DIR:$PATH:$JUNEST_BIN_WRAPPERS_DIR"
-    if ! dir_exists "$JUNEST_ROOT_DIR" || ! command_exists junest; then
-        if force_confirm || confirm "Install junest in $JUNEST_DIR and continue?"; then
-            header "Installing junest (arch linux jail)"
-            
-            safe_execute git clone --depth 1 https://github.com/fsquillace/junest.git "$JUNEST_DIR"
-            safe_execute junest setup
-            safe_execute junest -- sudo pacman --noconfirm -Syy
-            safe_execute junest -- sudo pacman --noconfirm -Sy archlinux-keyring
-            
-            success "Junest installed"
-        else
-            err "Unprivileged environment setup declined"
-            fatal "This script requires either sudo or junest to manage system dependencies"
-        fi
-    else
-        safe_execute junest -- sudo pacman --noconfirm -Syy
-        safe_execute junest -- sudo pacman --noconfirm -Sy archlinux-keyring
-    fi
-
-    ID="arch"
-}
-
 has_sudo() {
+	if ! command_exists sudo; then
+		return $RETERR
+	fi
+
 	local test_sudo_msg=$(LC_ALL=C sudo -vn 2>&1)
 	echo "$test_sudo_msg" | grep -q "password is required"
 }
 
 try_sudo() {
 	info "Executing on $ID 'sudo $*'"
-
-    if ! has_sudo; then
-        require_junest
-    fi
 
     if command_exists sudo; then
         if dir_exists "$JUNEST_ROOT_DIR"; then
@@ -97,11 +69,6 @@ try_sudo() {
 }
 
 distro_install() {
-
-    if ! has_sudo; then
-        require_junest
-    fi
-
     local cmd=""
     case "$ID" in
         arch)
@@ -119,10 +86,6 @@ distro_install() {
 }
 
 pkg_install() {
-    if ! has_sudo; then
-        require_junest
-    fi
-
     local target_os="all" 
     case "$1" in
         --both) shift ;;

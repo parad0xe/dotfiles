@@ -37,7 +37,10 @@ module_configure() {
 					echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PATH:$PYENV_ROOT/bin"'
 					echo 'eval "$(pyenv init -)"'
 				fi
-			} >> "$TARGET_SHELL_RC"
+			} >> "${TMP_DIR}/.pyenv_rc"
+
+			backup_file "$TARGET_SHELL_RC"
+			safe_execute mv "${TMP_DIR}/.pyenv_rc" "$TARGET_SHELL_RC"
 
 			success "Configuration injected into $TARGET_SHELL_RC"
 		else
