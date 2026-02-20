@@ -1,8 +1,17 @@
 #!/bin/bash
 
+module_init() {
+    if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+        export PATH="$HOME/.local/bin:$PATH"
+    fi
+}
+
 module_check() {
+	if ! command_exists "nvim" && ! file_exists "$HOME/.local/bin/nvim"; then
+        return $RET_MODULECHECK_REQUIRE_INSTALL
+    fi
+
     local plug_path="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim"
-    
     if ! file_exists "$plug_path"; then
         return $RET_MODULECHECK_REQUIRE_INSTALL
     fi
@@ -28,9 +37,19 @@ module_check() {
 module_install() {
     header "Installing neovim & code tools"
 
-    local plug_path="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim"
-    
+    info "Checking neovim..."
+
+	if ! command_exists "nvim"; then
+        _install_neovim_binary
+    else
+        success "Neovim is already installed"
+    fi
+
+	blank
     info "Checking vim-plug..."
+
+    local plug_path="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/site/autoload/plug.vim"
+
     if ! file_exists "$plug_path"; then
         _install_vim_plug "$plug_path"
     else
@@ -39,6 +58,7 @@ module_install() {
 
     blank
     info "Checking tree-sitter..."
+
     local ts_installed=false
 
     case "$TARGET_SHELL" in
@@ -90,6 +110,24 @@ module_configure() {
 }
 
 # --- Internal helpers ---
+
+_install_neovim_binary() {
+    info "Installing Neovim binary (nightly)..."
+    
+    ensure_has_command "curl"
+    ensure_has_command "tar"
+
+    local archive="nvim-linux-x86_64.tar.gz"
+    
+    step "Downloading Neovim nightly archive..."
+    safe_execute curl -LO "https://github.com/neovim/neovim/releases/download/nightly/$archive" --output-dir "$TMP_DIR"
+
+    step "Extracting to $HOME/.local..."
+    safe_mkdir "$HOME/.local"
+    safe_execute tar -C "$HOME/.local" -xzf "$TMP_DIR/$archive" --strip-components=1
+
+    success "Neovim installed in $HOME/.local"
+}
 
 _install_vim_plug() {
     local plug_path="$1"
