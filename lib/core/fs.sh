@@ -155,7 +155,7 @@ safe_rm() {
 
     info "The following ${#targets[@]} item(s) will be permanently deleted:"
     for target in "${targets[@]}"; do
-        step "$target"
+        step "rm: $target"
     done
 
     blank
