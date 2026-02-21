@@ -18,7 +18,7 @@ module_check() {
 		fi
 	fi
 
-	return $RET_MODULECHECK_DONOTHING
+	return $RET_MODULE_DONOTHING
 }
 
 module_install() {

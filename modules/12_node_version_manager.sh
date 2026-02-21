@@ -15,7 +15,7 @@ module_check() {
             ;;
     esac
 
-    return $RET_MODULECHECK_DONOTHING
+    return $RET_MODULE_DONOTHING
 }
 
 module_install() {
@@ -47,7 +47,7 @@ module_uninstall() {
     header "Uninstalling nvm"
     
     if safe_rm "$HOME/.nvm"; then
-        if [[ "$TARGET_SHELL" == "fish" ]] && fish_command_exists "fisher"; then
+        if target_shell_is "fish" && fish_command_exists "fisher"; then
             info "Removing nvm.fish plugin..."
             safe_execute fish -c "fisher remove jorgebucaran/nvm.fish" 2>/dev/null || true
         fi

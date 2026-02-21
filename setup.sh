@@ -87,6 +87,79 @@ EOF
 # ============================================================
 #  Shell Environment Logic
 # ============================================================
+autoload_shell() {
+    local default_rc="$HOME/.bashrc"
+
+    if target_shell_is "bash"; then
+        return $RETOK
+    fi
+
+    blank
+    if force_confirm || confirm "Do you want to autoload $TARGET_SHELL when opening a terminal?"; then
+        info "Configuring autoload in $default_rc..."
+
+        if grep -q "exec $TARGET_SHELL" "$default_rc" 2>/dev/null; then
+            muted "Autoload for $TARGET_SHELL is already configured."
+        else
+            backup_file "$default_rc" 2>/dev/null || true
+
+			step "Generate autoload configuration"
+            cat <<EOF > "$TMP_DIR/.default_rc"
+
+# --- BEGIN Autoload $TARGET_SHELL ---
+export PATH="\$PATH:\$HOME/.local/share/junest/bin:\$HOME/.junest/usr/bin_wrappers"
+
+# Launch $TARGET_SHELL if interactive AND NOT in junest
+if [[ \$- == *i* ]] && [[ -z "\${JUNEST_ENV:-}" ]] && command -v $TARGET_SHELL >/dev/null 2>&1; then
+    export AUTOLOADED_SHELL=1
+    exec $TARGET_SHELL
+fi
+# --- END Autoload $TARGET_SHELL ---
+EOF
+            
+			if ! dry_run; then
+				step "Write autoload configuration in $default_rc"
+				cat "$TMP_DIR/.default_rc" | safe_execute tee -a "$default_rc" >/dev/null
+			else
+				dry "Write autoload configuration in $default_rc"
+			fi
+
+			blank
+			success "Autoload successfully added to $default_rc"
+        fi
+        
+        blank
+        success "Launching $TARGET_SHELL for this session..."
+       
+		if is_empty "${JUNEST_ENV:-}"; then
+            if ! dry_run; then
+                exec "$TARGET_SHELL"
+            else
+                dry "exec $TARGET_SHELL"
+            fi
+        fi
+    else
+        muted "Autoload skipped."
+    fi
+}
+
+remove_autoload_shell() {
+    local default_rc="$HOME/.bashrc"
+
+    if grep -q "# --- BEGIN Autoload" "$default_rc" 2>/dev/null; then
+        blank
+        info "Cleaning up autoload configuration in $default_rc..."
+        
+        backup_file "$default_rc" 2>/dev/null || true
+        safe_execute sed '/# --- BEGIN Autoload/,/# --- END Autoload/d' "$default_rc" > "${TMP_DIR}/clean_bashrc"
+        safe_mv "${TMP_DIR}/clean_bashrc" > "$default_rc"
+        
+        success "Autoload successfully removed from $default_rc"
+    else
+        muted "No autoload configuration found to clean."
+    fi
+}
+
 setup_shell_env() {
 	if is_not_empty "$TARGET_SHELL" && [[ ! "$TARGET_SHELL" =~ ^(bash|zsh|fish)$ ]]; then
 		warn "Invalid shell '${TARGET_SHELL}' provided. Reverting to auto-detection..."
@@ -138,7 +211,7 @@ run_modules() {
 		if (
             # Isolated subshell
             module_init()  { return $RET_MODULE_LOADED; }
-            module_check() { return $RET_MODULECHECK_DONOTHING; }
+            module_check() { return $RET_MODULE_DONOTHING; }
 
             source "${module}"
 
@@ -151,7 +224,7 @@ run_modules() {
                 reinstall)   	return $RET_MODULE_DOEXECUTE ;;
                 reconfigure) 	! module_check ;;
                 uninstall) 		return $RET_MODULE_DOEXECUTE ;;
-                *)				return $RET_MODULECHECK_DONOTHING ;;
+                *)				return $RET_MODULE_DONOTHING ;;
             esac
         ); then
             modules_to_run+=("${module}")
@@ -225,6 +298,22 @@ run_modules() {
             esac
         ) || fatal "An error occurred in module: ${module}"
     done
+
+	case "${RUN_COMMAND}" in
+		install)
+			autoload_shell
+			;;
+		reinstall)
+			remove_autoload_shell
+			autoload_shell
+			;;
+		reconfigure)
+			autoload_shell
+			;;
+		uninstall)
+			remove_autoload_shell
+			;;
+	esac
 }
 
 target_shell_is() {

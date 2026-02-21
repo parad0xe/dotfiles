@@ -5,7 +5,7 @@ module_check() {
         return $RET_MODULE_DOEXECUTE
     fi
 
-    return $RET_MODULECHECK_DONOTHING
+    return $RET_MODULE_DONOTHING
 }
 
 module_install() {

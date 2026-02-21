@@ -31,7 +31,7 @@ module_check() {
             ;;
     esac
 
-    return $RET_MODULECHECK_DONOTHING
+    return $RET_MODULE_DONOTHING
 }
 
 module_install() {
@@ -100,7 +100,7 @@ module_configure() {
 
     blank
     info "Synchronizing lua modules..."
-    safe_link_all "$ASSETS_DIR/tools/nvim/lua" "$HOME/.config/nvim/lua"
+    safe_link "$ASSETS_DIR/tools/nvim/lua" "$HOME/.config/nvim/lua"
 
     blank
     success "Neovim environment synchronized"

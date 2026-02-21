@@ -1,17 +1,13 @@
 #!/bin/bash
 
 command_exists() {
-	if dry_run; then
-		return $RETOK
-	fi
 	command -v "$1" >/dev/null 2>&1 || which "$1" 2>/dev/null
 }
 
 fish_command_exists() {
-	if dry_run; then
-		return $RETOK
+	if ! command_exists "fish"; then
+		return $RETERR
 	fi
-	ensure_has_command "fish"
 	fish -c "command -v '$1' || which '$1' || functions -q '$1'" >/dev/null 2>&1
 }
 
@@ -54,7 +50,7 @@ try_sudo() {
 	info "Executing on $ID 'sudo $*'"
 
     if command_exists sudo; then
-        if dir_exists "$JUNEST_ROOT_DIR"; then
+        if ! has_real_sudo; then
             if ! safe_execute junest -- sudo "$@"; then
                 fatal "Failed to run 'junest -- sudo $*'"
             fi
