@@ -50,7 +50,6 @@ end
 export EDITOR=/usr/bin/vim
 
 alias c="cc -Wall -Wextra -Werror"
-alias n="norminette"
 alias ll="ls -la"
 
 if type -q nvim

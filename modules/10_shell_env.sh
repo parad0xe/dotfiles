@@ -7,6 +7,11 @@ module_check() {
                 return $RET_MODULE_DOEXECUTE
             fi
             ;;
+		zsh)
+            if ! dir_exists "$HOME/.oh-my-zsh"; then
+                return $RET_MODULE_DOEXECUTE
+            fi
+            ;;
     esac
     
     if ! command_exists "zoxide"; then
@@ -25,6 +30,14 @@ module_install() {
                 _install_fisher
             else
                 success "Fisher already installed"
+            fi
+            blank
+            ;;
+		zsh)
+            if ! dir_exists "$HOME/.oh-my-zsh"; then
+                _install_oh_my_zsh
+            else
+                success "Oh-My-Zsh already installed"
             fi
             blank
             ;;
@@ -77,6 +90,12 @@ module_uninstall() {
             safe_execute fish -c "fisher remove jorgebucaran/fisher"
         fi
 
+		if target_shell_is "zsh" && dir_exists "$HOME/.oh-my-zsh"; then
+            blank
+            info "Uninstalling Oh-My-Zsh..."
+            safe_rm "$HOME/.oh-my-zsh"
+        fi
+
 		blank
         info "Removing shell configuration links..."
 
@@ -113,4 +132,14 @@ _install_zoxide() {
 
 	safe_execute curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
 	success "Zoxide installed successfully"
+}
+
+_install_oh_my_zsh() {
+    info "Installing Oh-My-Zsh..."
+
+    ensure_has_command "curl"
+    ensure_has_command "git"
+
+    safe_execute sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    success "Oh-My-Zsh installed successfully"
 }
