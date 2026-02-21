@@ -107,10 +107,12 @@ autoload_shell() {
             cat <<EOF > "$TMP_DIR/.default_rc"
 
 # --- BEGIN Autoload $TARGET_SHELL ---
-export PATH="\$PATH:\$HOME/.local/share/junest/bin:\$HOME/.junest/usr/bin_wrappers"
+if [[ ":\$PATH:" != *":$JUNEST_EXEC_DIR:"* ]]; then
+    export PATH="\$PATH:$JUNEST_EXEC_DIR:$JUNEST_BIN_WRAPPERS_DIR"
+fi
 
 # Launch $TARGET_SHELL if interactive AND NOT in junest
-if [[ \$- == *i* ]] && [[ -z "\${JUNEST_ENV:-}" ]] && command -v $TARGET_SHELL >/dev/null 2>&1; then
+if [[ \$- == *i* ]] && [[ -z "\${JUNEST_ENV:-}" ]] && [[ -z "\${AUTOLOADED_SHELL:-}" ]] && command -v $TARGET_SHELL >/dev/null 2>&1; then
     export AUTOLOADED_SHELL=1
     exec $TARGET_SHELL
 fi
@@ -151,7 +153,6 @@ remove_autoload_shell() {
         info "Cleaning up autoload configuration in $default_rc..."
 
 		if can_read "$default_rc"; then
-        	backup_file "$default_rc"
         	safe_execute sed '/# --- BEGIN Autoload/,/# --- END Autoload/d' "$default_rc" > "${TMP_DIR}/clean_bashrc"
         	safe_mv "${TMP_DIR}/clean_bashrc" "$default_rc"
 
@@ -221,16 +222,43 @@ run_modules() {
 			continue
 		fi
 
+		local env_data=$(
+			module_export_env() { return $RETOK; }
+			source "$module" </dev/null >/dev/null 2>&1
+			module_export_env
+		)
+
+		for pair in $env_data; do
+			if [[ -z "$pair" ]]; then
+				continue
+			fi
+
+			key="${pair%%=*}"
+			value="${pair#*=}"
+
+			case "$key" in
+				PATH_PREPEND)
+					if [[ ":$PATH:" != *":$value:"* ]]; then
+						export PATH="$value:$PATH"
+					fi
+					;;
+				PATH_APPEND)
+					if [[ ":$PATH:" != *":$value:"* ]]; then
+						export PATH="$PATH:$value"
+					fi
+					;;
+				*)
+					if [[ -n "$key" && "$key" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+						export "$key=$value"
+					fi
+					;;
+			esac
+		done
+
 		if (
-            # Isolated subshell
-            module_init()  { return $RET_MODULE_LOADED; }
             module_check() { return $RET_MODULE_DONOTHING; }
 
             source "${module}"
-
-			if ! module_init; then
-				return $RETERR
-			fi
 
             case "${RUN_COMMAND}" in
                 install)     	module_check ;;
@@ -246,7 +274,7 @@ run_modules() {
 
 	if [[ ${#modules_to_run[@]} -eq 0 ]]; then
         log "No modules to process."
-        return
+        return $RETERR
     fi
 
 	blank
@@ -279,17 +307,11 @@ run_modules() {
         info "Executing: $display_name"
 
         (
-			module_init()      { return $RET_MODULE_LOADED; }
             module_install()   { return $RETOK; }
             module_uninstall()   { return $RETOK; }
             module_configure() { return $RETOK; }
 
             source "${module}"
-
-            if ! module_init; then
-				warn "skip $module"
-				return $RETOK
-			fi
 
 			case "${RUN_COMMAND}" in
                 install)
@@ -310,23 +332,7 @@ run_modules() {
                     ;;
             esac
         ) || fatal "An error occurred in module: ${module}"
-    done
-
-	case "${RUN_COMMAND}" in
-		install)
-			autoload_shell
-			;;
-		reinstall)
-			remove_autoload_shell
-			autoload_shell
-			;;
-		reconfigure)
-			autoload_shell
-			;;
-		uninstall)
-			remove_autoload_shell
-			;;
-	esac
+    done	
 }
 
 target_shell_is() {
@@ -390,7 +396,11 @@ main() {
 		"Backup folder  : $BACKUP_DIR" \
 		"Local fonts    : $LOCAL_FONT_DIR"
 
-	run_modules
+	if ! run_modules; then
+		blank
+		success "Nothing to do."
+		return
+	fi
 
 	blank
 	case $RUN_COMMAND in
@@ -410,6 +420,15 @@ main() {
 			success "Uninstallation complete"
 			;;
 		*) usage ;;
+	esac
+
+	case "${RUN_COMMAND}" in
+		install|reinstall|reconfigure)
+			autoload_shell
+			;;
+		uninstall)
+			remove_autoload_shell
+			;;
 	esac
 }
 

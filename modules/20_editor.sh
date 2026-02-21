@@ -1,8 +1,8 @@
 #!/bin/bash
 
-module_init() {
+module_export_env() {
     if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
-        export PATH="$HOME/.local/bin:$PATH"
+        printf '%s=%s\n' "PATH_PREPEND" '$HOME/.local/bin'
     fi
 }
 

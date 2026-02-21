@@ -1,14 +1,11 @@
 #!/bin/bash
 
-module_init() {
-	if has_real_sudo; then
-		return $RET_MODULE_SKIP
+module_export_env() {
+	if ! has_real_sudo; then
+        printf '%s=%s\n' "PATH_APPEND" "${JUNEST_EXEC_DIR}"
+        printf '%s=%s\n' "PATH_APPEND" "${JUNEST_BIN_WRAPPERS_DIR}"
+        printf '%s=%s\n' "ID" "arch"
 	fi
-
-	export PATH="$JUNEST_EXEC_DIR:$PATH:$JUNEST_BIN_WRAPPERS_DIR"
-    ID="arch"
-
-	return $RET_MODULE_LOADED
 }
 
 module_check() {

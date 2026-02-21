@@ -1,8 +1,4 @@
 
-module_init() {
-	return $RETOK
-}
-
 module_check() {
 	return $RET_MODULE_DOEXECUTE
 }

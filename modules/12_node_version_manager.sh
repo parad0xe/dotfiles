@@ -45,17 +45,32 @@ module_configure() {
 
 module_uninstall() {
     header "Uninstalling nvm"
-    
-    if safe_rm "$HOME/.nvm"; then
-        if target_shell_is "fish" && fish_command_exists "fisher"; then
-            info "Removing nvm.fish plugin..."
-            safe_execute fish -c "fisher remove jorgebucaran/nvm.fish" 2>/dev/null || true
+
+	local uninstalled=false
+
+    if ! force_confirm && ! confirm "Do you want to completely uninstall nvm and its node versions?"; then
+        muted "Nvm uninstallation skipped."
+        return $RETOK
+    fi
+
+    if target_shell_is "fish" && fish_command_exists "fisher"; then
+        info "Removing nvm.fish plugin..."
+		if safe_execute fish -c "fisher remove jorgebucaran/nvm.fish"; then
+            uninstalled=true
         fi
-        
-		blank
+    fi
+
+    if safe_rm "$HOME/.nvm"; then
+        uninstalled=true
+    else
+        muted "Nvm directory not found or already removed."
+    fi
+
+	if [[ "$uninstalled" == "true" ]]; then
+        blank
         success "Nvm and node versions uninstalled"
     else
-        muted "Nvm uninstallation skipped."
+        muted "Nothing to do: nvm is already uninstalled."
     fi
 }
 
