@@ -69,6 +69,11 @@ _install_junest() {
 }
 
 _configure_junest() {
-    safe_execute junest -- sudo pacman --noconfirm -Syy
-    safe_execute junest -- sudo pacman --noconfirm -Sy archlinux-keyring
+	if is_empty "${JUNEST_ENV:-}"; then
+		safe_execute junest -- sudo pacman --noconfirm -Syy
+		safe_execute junest -- sudo pacman --noconfirm -Sy archlinux-keyring
+	else
+		safe_execute sudo pacman --noconfirm -Syy
+		safe_execute sudo pacman --noconfirm -Sy archlinux-keyring
+	fi
 }

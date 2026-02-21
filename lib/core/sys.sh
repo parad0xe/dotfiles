@@ -50,7 +50,7 @@ try_sudo() {
 	info "Executing on $ID 'sudo $*'"
 
     if command_exists sudo; then
-        if ! has_real_sudo; then
+        if ! has_real_sudo && is_empty "${JUNEST_ENV:-}"; then
             if ! safe_execute junest -- sudo "$@"; then
                 fatal "Failed to run 'junest -- sudo $*'"
             fi
