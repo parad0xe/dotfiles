@@ -14,13 +14,13 @@ module_install() {
     blank
     info "Installing core cli utilities..."
     pkg_install --both python3 curl wget clang \
-        llvm gcc unzip tar git man make which vim ncdu
+        llvm gcc unzip tar git man make which vim ncdu fzf bat
 
 	case "$TARGET_SHELL" in
 		fish)
     		blank
     		info "Installing terminal $TARGET_SHELL..."
-			pkg_install --both fish ;;
+			pkg_install --both fish;;
 		zsh)
     		blank
     		info "Installing terminal $TARGET_SHELL..."
@@ -29,8 +29,8 @@ module_install() {
 
     blank
     info "Installing sys utilities..."
-    pkg_install --debian-only python3-pygments python3-venv libclang-dev openssh-server
-    pkg_install --arch-only python-pygments python-virtualenv openssh
+    pkg_install --debian-only python3-pygments python3-venv libclang-dev openssh-server fd-find
+    pkg_install --arch-only python-pygments python-virtualenv openssh fd
 
     blank
     success "System dependencies installed successfully"

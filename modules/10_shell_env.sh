@@ -6,6 +6,10 @@ module_check() {
             if ! fish_command_exists "fisher"; then
                 return $RET_MODULE_DOEXECUTE
             fi
+
+			if ! safe_execute fish -c "fisher list | grep -q PatrickF1/fzf.fish" 2>/dev/null; then
+                return $RET_MODULE_DOEXECUTE
+            fi
             ;;
 		zsh)
             if ! dir_exists "$HOME/.oh-my-zsh"; then
@@ -63,6 +67,9 @@ module_configure() {
             safe_mkdir "$HOME/.config/fish"
             safe_link "$ASSETS_DIR/shell/fish/config.fish" "$HOME/.config/fish/config.fish"
             safe_link_all "$ASSETS_DIR/shell/fish/functions" "$HOME/.config/fish/functions"
+
+			info "Configuring fzf for fish..."
+            safe_execute fish -c "fisher install PatrickF1/fzf.fish"
             ;;
         bash)
             safe_link "$ASSETS_DIR/shell/bash/.bashrc" "$HOME/.bashrc"
@@ -87,6 +94,7 @@ module_uninstall() {
         if target_shell_is "fish" && fish_command_exists "fisher"; then
 			blank
             info "Uninstalling fisher and its plugins..."
+            safe_execute fish -c "fisher remove PatrickF1/fzf.fish"
             safe_execute fish -c "fisher remove jorgebucaran/fisher"
         fi
 
