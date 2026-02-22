@@ -134,10 +134,16 @@ echo 'syntax on' > assets/custom/.vimrc
 #!/bin/bash
 
 module_check() {
+    # Verification of command presence
+    if ! command_exists "vim"; then
+        return $RET_MODULE_DOEXECUTE
+    fi
+
     # Verification of file presence before action
     if ! file_exists "$HOME/.vimrc"; then
         return $RET_MODULE_DOEXECUTE
     fi
+
     return $RET_MODULE_DONOTHING
 }
 
