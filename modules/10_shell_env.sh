@@ -7,7 +7,7 @@ module_check() {
                 return $RET_MODULE_DOEXECUTE
             fi
 
-			if ! safe_execute fish -c "fisher list | grep -q PatrickF1/fzf.fish" 2>/dev/null; then
+			if ! safe_execute fish -c "fisher list | grep -q fzf.fish" 2>/dev/null; then
                 return $RET_MODULE_DOEXECUTE
             fi
             ;;

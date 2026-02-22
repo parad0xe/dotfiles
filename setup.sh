@@ -95,30 +95,27 @@ autoload_shell() {
     fi
 
     blank
-    if force_confirm || confirm "Do you want to autoload $TARGET_SHELL when opening a terminal?"; then
-        info "Configuring autoload in $default_rc..."
+    if ! grep -q "exec $TARGET_SHELL" "$default_rc" 2>/dev/null; then
+		if force_confirm || confirm "Do you want to autoload $TARGET_SHELL when opening a terminal?"; then
+			info "Configuring autoload in $default_rc..."
 
-        if grep -q "exec $TARGET_SHELL" "$default_rc" 2>/dev/null; then
-            muted "Autoload for $TARGET_SHELL is already configured."
-        else
-            backup_file "$default_rc" 2>/dev/null || true
+			backup_file "$default_rc" 2>/dev/null || true
 
 			step "Generate autoload configuration"
-            cat <<EOF > "$TMP_DIR/.default_rc"
-
+			cat <<EOF > "$TMP_DIR/.default_rc"
 # --- BEGIN Autoload $TARGET_SHELL ---
 if [[ ":\$PATH:" != *":$JUNEST_EXEC_DIR:"* ]]; then
-    export PATH="\$PATH:$JUNEST_EXEC_DIR:$JUNEST_BIN_WRAPPERS_DIR"
+	export PATH="\$PATH:$JUNEST_EXEC_DIR:$JUNEST_BIN_WRAPPERS_DIR"
 fi
 
 # Launch $TARGET_SHELL if interactive AND NOT in junest
 if [[ \$- == *i* ]] && [[ -z "\${JUNEST_ENV:-}" ]] && [[ -z "\${AUTOLOADED_SHELL:-}" ]] && command -v $TARGET_SHELL >/dev/null 2>&1; then
-    export AUTOLOADED_SHELL=1
-    exec $TARGET_SHELL
+	export AUTOLOADED_SHELL=1
+	exec $TARGET_SHELL
 fi
 # --- END Autoload $TARGET_SHELL ---
 EOF
-            
+				
 			if ! dry_run; then
 				step "Write autoload configuration in $default_rc"
 				cat "$TMP_DIR/.default_rc" | safe_execute tee -a "$default_rc" >/dev/null
@@ -128,21 +125,23 @@ EOF
 
 			blank
 			success "Autoload successfully added to $default_rc"
-        fi
-        
-        blank
-        success "Launching $TARGET_SHELL for this session..."
-       
-		if is_empty "${JUNEST_ENV:-}"; then
-            if ! dry_run; then
-                exec "$TARGET_SHELL"
-            else
-                dry "exec $TARGET_SHELL"
-            fi
-        fi
-    else
-        muted "Autoload skipped."
-    fi
+			
+			blank
+			success "Launching $TARGET_SHELL for this session..."
+		   
+			if is_empty "${JUNEST_ENV:-}"; then
+				if ! dry_run; then
+					exec "$TARGET_SHELL"
+				else
+					dry "exec $TARGET_SHELL"
+				fi
+			fi
+		else
+			muted "Autoload skipped."
+		fi
+	else
+		muted "Autoload for $TARGET_SHELL is already configured."
+	fi
 }
 
 remove_autoload_shell() {
