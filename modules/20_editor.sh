@@ -7,7 +7,7 @@ module_export_env() {
 }
 
 module_check() {
-	if ! command_exists "nvim" && ! file_exists "$HOME/.local/bin/nvim"; then
+	if ! command_exists "nvim" || ! file_exists "$HOME/.local/bin/nvim"; then
         return $RET_MODULE_DOEXECUTE
     fi
 
@@ -39,7 +39,7 @@ module_install() {
 
     info "Checking neovim..."
 
-	if ! command_exists "nvim"; then
+	if ! file_exists "$HOME/.local/bin/nvim"; then
         _install_neovim_binary
     else
         success "Neovim is already installed"
@@ -102,6 +102,12 @@ module_configure() {
     info "Synchronizing lua modules..."
     safe_link "$ASSETS_DIR/tools/nvim/lua" "$HOME/.config/nvim/lua"
 
+
+	blank
+    info "Installing nvim plugins..."
+	nvim --headless +'PlugInstall --sync' +qa || fatal "PlugInstall failed"
+  	nvim --headless +'PlugUpdate --sync' +qa || fatal "PlugUpdate failed"
+
     blank
     success "Neovim environment synchronized"
 }
@@ -131,7 +137,7 @@ _install_neovim_binary() {
     ensure_has_command "tar"
 
     local archive="nvim-linux-x86_64.tar.gz"
-    
+
     step "Downloading Neovim nightly archive..."
     safe_execute curl -LO "https://github.com/neovim/neovim/releases/download/nightly/$archive" --output-dir "$TMP_DIR"
 
