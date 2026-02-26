@@ -20,7 +20,7 @@ if nvim_tree_ok then
         view = { width = 23 },
         update_focused_file = { enable = true },
         renderer = {
-            group_empty = true,
+            group_empty = false,
             root_folder_label = false,
             icons = { web_devicons = { folder = { enable = true } } }
         },
